@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora Geométrica</title>
+  <style>
+    body { font-family: Arial; background: #f5f5f5; margin: 40px; color: #333; }
+    .container { max-width: 700px; margin: auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    label, select, input { display: block; width: 100%; margin-bottom: 15px; }
+    button { padding: 10px 15px; background: #333; color: #fff; border: none; cursor: pointer; }
+    .resultado, .formula { margin-top: 20px; font-weight: bold; }
+    #figura-img img { max-width: 100%; max-height: 250px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Calculadora Geométrica</h1>
+    <label for="figura">Seleccione una figura o sólido:</label>
+    <select id="figura" onchange="mostrarCampos()">
+      <option value="">-- Seleccione --</option>
+      <option value="cuadrado">Cuadrado</option>
+      <option value="rectangulo">Rectángulo</option>
+      <option value="triangulo">Triángulo</option>
+      <option value="rombo">Rombo</option>
+      <option value="trapecio">Trapecio</option>
+      <option value="poligono">Polígono Regular</option>
+      <option value="circunferencia">Circunferencia</option>
+      <option value="cubo">Cubo</option>
+      <option value="prisma">Prisma</option>
+      <option value="cilindro">Cilindro</option>
+      <option value="cono">Cono</option>
+      <option value="esfera">Esfera</option>
+      <option value="piramide">Pirámide</option>
+    </select>
+
+    <div id="figura-img" style="text-align:center;"></div>
+    <div id="campos"></div>
+    <button onclick="calcular()">Calcular</button>
+    <div class="resultado" id="resultado"></div>
+    <div class="formula" id="formula"></div>
+  </div>
+
+<script>
+function mostrarCampos() {
+  const figura = document.getElementById('figura').value;
+  const campos = document.getElementById('campos');
+  const img = document.getElementById('figura-img');
+  let html = '';
+  const crear = (l, i) => `<label>${l}: <input type="number" id="${i}"></label>`;
+  const imgSrc = `img/${figura}.png`;
+  img.innerHTML = `<img src="${imgSrc}" alt="${figura}">`;
+  switch(figura) {
+    case 'cuadrado': html+=crear('Lado','lado'); break;
+    case 'rectangulo': html+=crear('Base','base')+crear('Altura','altura'); break;
+    case 'triangulo': html+=crear('Base','base')+crear('Altura','altura')+crear('Lado 1','lado1')+crear('Lado 2','lado2'); break;
+    case 'rombo': html+=crear('Diagonal mayor','dmayor')+crear('Diagonal menor','dmenor')+crear('Lado','lado'); break;
+    case 'trapecio': html+=crear('Base mayor','baseMayor')+crear('Base menor','baseMenor')+crear('Altura','altura')+crear('Lado 1','lado1')+crear('Lado 2','lado2'); break;
+    case 'poligono': html+=crear('Perímetro','perimetro')+crear('Apotema','apotema')+crear('Número de lados','lados'); break;
+    case 'circunferencia': html+=crear('Radio','radio'); break;
+    case 'cubo': html+=crear('Lado','lado'); break;
+    case 'prisma': html+=crear('Área base','areaBase')+crear('Altura','altura'); break;
+    case 'cilindro': html+=crear('Radio','radio')+crear('Altura','altura'); break;
+    case 'cono': html+=crear('Radio','radio')+crear('Altura','altura'); break;
+    case 'esfera': html+=crear('Radio','radio'); break;
+    case 'piramide': html+=crear('Área base','areaBase')+crear('Altura','altura'); break;
+  }
+  campos.innerHTML = html;
+  document.getElementById('resultado').innerText = '';
+  document.getElementById('formula').innerText = '';
+}
+
+function calcular() {
+  const f = document.getElementById('figura').value;
+  const v = id => parseFloat(document.getElementById(id).value);
+  const π = Math.PI;
+  let r = '', fml = '';
+  switch(f) {
+    case 'cuadrado': r=`Área: ${v('lado')**2} | Perímetro: ${4*v('lado')}`; fml='A = L×L, P = 4×L'; break;
+    case 'rectangulo': r=`Área: ${v('base')*v('altura')} | Perímetro: ${2*(v('base')+v('altura'))}`; fml='A = B×H, P = 2(B+H)'; break;
+    case 'triangulo': r=`Área: ${(v('base')*v('altura')/2)} | Perímetro: ${v('base')+v('lado1')+v('lado2')}`; fml='A = (B×H)/2'; break;
+    case 'rombo': r=`Área: ${(v('dmayor')*v('dmenor')/2)} | Perímetro: ${4*v('lado')}`; break;
+    case 'trapecio': r=`Área: ${((v('baseMayor')+v('baseMenor'))*v('altura')/2)} | Perímetro: ${v('baseMayor')+v('baseMenor')+v('lado1')+v('lado2')}`; break;
+    case 'poligono': r=`Área: ${(v('perimetro')*v('apotema')/2)} | Perímetro: ${v('perimetro')}`; break;
+    case 'circunferencia': r=`Área: ${(π*v('radio')**2)} | Perímetro: ${(2*π*v('radio'))}`; break;
+    case 'cubo': r=`Volumen: ${v('lado')**3}`; break;
+    case 'prisma': r=`Volumen: ${v('areaBase')*v('altura')}`; break;
+    case 'cilindro': r=`Volumen: ${π*v('radio')**2*v('altura')}`; break;
+    case 'cono': r=`Volumen: ${(1/3)*π*v('radio')**2*v('altura')}`; break;
+    case 'esfera': r=`Volumen: ${(4/3)*π*v('radio')**3}`; break;
+    case 'piramide': r=`Volumen: ${(1/3)*v('areaBase')*v('altura')}`; break;
+  }
+  document.getElementById('resultado').innerText = r;
+  document.getElementById('formula').innerText = fml;
+}
+</script>
+</body>
+</html>
